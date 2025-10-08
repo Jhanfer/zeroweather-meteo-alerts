@@ -1,0 +1,21 @@
+{
+    "version": 2,
+    "builds": [
+        {
+            "src": "MeteoAlarmapi.py",
+            "use": "@vercel/python",
+            "config":{"maxLambdaSize":"50mb"}
+        }
+    ],
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "MeteoAlarmapi.py"
+        }
+    ],
+    "env": {
+        "PYTHONUNBUFFERED": "1",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "APP_MODULE": "MeteoAlarmapi:app"
+    }
+}

@@ -1,0 +1,9 @@
+requests>=2.31.0
+beautifulsoup4>=4.12.2
+fastapi>=0.115.0
+tqdm>=4.66.4
+psutil>=5.9.8
+python-dotenv>=1.0.0
+slowapi>=0.1.9
+uvicorn>=0.30.6
+lxml

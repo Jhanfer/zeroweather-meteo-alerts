@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Monitor de recursos de la API en tiempo real
+        </title>
+
+        <style>
+            #status_display {
+                font-size: 1.5em;
+                color: #333;
+                padding: 10px;
+                border: 1px solid #ccc;
+                background-color: #f9f9f9;
+            }
+            .bar-container { margin-bottom: 15px; }
+            .progress-bar {
+                width: 100%;
+                background-color: #eee;
+                border-radius: 4px;
+                overflow: hidden;
+                height: 20px;
+            }
+            .progress {
+                background-color: #007bff; /* Color azul */
+                height: 100%;
+                transition: width 0.3s; /* Animación suave */
+            }
+        </style>
+    </head>
+
+    <body>
+        <h1>Monitor de recursos</h1>
+        <div id="status_display">
+            <div id="cpu_bar_container" class="bar-container">
+                CPU: <span id="cpu_text">0.00%</span>
+                <div class="progress-bar">
+                    <div id="cpu_progress" class="progress" style="width: 0%;"></div>
+                </div>
+            </div>
+
+            <div id="ram_bar_container" class="bar-container">
+                RAM: <span id="ram_text">0.00%</span>
+                <div class="progress-bar">
+                    <div id="ram_progress" class="progress" style="width: 0%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const source = new EventSource("/stream-monitor");
+            const displayElement = document.getElementById("status_display");
+            const cpuProgress = document.getElementById("cpu_progress");
+            const ramProgress = document.getElementById("ram_progress");
+            const cpuText = document.getElementById("cpu_text");
+            const ramText = document.getElementById("ram_text");
+
+            source.onmessage = function(event) {
+                try {
+                    // 1. Parsear la cadena JSON que viene de Python
+                    const data = JSON.parse(event.data);
+                    const cpu_usage = data.cpu;
+                    const ram_usage = data.ram;
+
+                    // 2. Renderizar la barra de CPU
+                    cpuProgress.style.width = `${cpu_usage}%`;
+                    cpuText.textContent = `${cpu_usage.toFixed(2)}%`;
+
+                    // 3. Renderizar la barra de RAM
+                    ramProgress.style.width = `${ram_usage}%`;
+                    ramText.textContent = `${ram_usage.toFixed(2)}%`;
+
+                } catch (e) {
+                    console.error("Error al parsear datos JSON:", e);
+                }
+            };
+
+            
+            source.onerror = function(err) {
+                console.error("EventSource falló: ", err);
+                source.close();
+                displayElement.innerHTML = "ERROR: Conexión con streaming perdida. Intente recargar."
+            }
+        </script>
+    </body>
+</html>
