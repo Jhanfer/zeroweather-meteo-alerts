@@ -7,3 +7,4 @@ python-dotenv>=1.0.0
 slowapi>=0.1.9
 uvicorn>=0.30.6
 lxml
+aiohttp>=3.9.1
