@@ -191,25 +191,25 @@ def auth_dependency(request: Request, token: str | None = Query(default=None), a
     )
 
 
-async def metric_stream():
-    try:
-        while True:
-            cpu_ussage = psutil.cpu_percent(interval=None)
-            ram_ussage = psutil.virtual_memory().percent
-            data = {
-                "cpu":cpu_ussage,
-                "ram":ram_ussage
-            }
-            data_string = json.dumps(data)
-            yield f"data: {data_string}\n\n"
-            await asyncio.sleep(1)
-    except asyncio.CancelledError as e:
-        print("Cliente desconectado del stream")
+# async def metric_stream():
+#     try:
+#         while True:
+#             cpu_ussage = psutil.cpu_percent(interval=None)
+#             ram_ussage = psutil.virtual_memory().percent
+#             data = {
+#                 "cpu":cpu_ussage,
+#                 "ram":ram_ussage
+#             }
+#             data_string = json.dumps(data)
+#             yield f"data: {data_string}\n\n"
+#             await asyncio.sleep(1)
+#     except asyncio.CancelledError as e:
+#         print("Cliente desconectado del stream")
 
 
-@app.get("/stream-monitor", include_in_schema=False, response_class=StreamingResponse)
-async def stream_monitor_data():
-    return StreamingResponse(metric_stream() ,media_type="text/event-stream" )
+# @app.get("/stream-monitor", include_in_schema=False, response_class=StreamingResponse)
+# async def stream_monitor_data():
+#     return StreamingResponse(metric_stream() ,media_type="text/event-stream" )
 
 
 async def get_cached_alerts(country, province):
@@ -224,16 +224,16 @@ async def get_cached_alerts(country, province):
     return data
 
 
-#Métricas de uso de la api
-@app.get("/monitor")
-@limiter.limit("5/minute")
-async def get_metrics(request: Request, authorized: bool = Depends(auth_dependency)):
-    try:
-        with open("monitor.html", "r") as f:
-            html_content = f.read()
-        return HTMLResponse(content=html_content)
-    except FileNotFoundError as e:
-        return HTMLResponse(content="<h1>Error: monitor.html no encontrado</h1>")
+# #Métricas de uso de la api
+# @app.get("/monitor")
+# @limiter.limit("5/minute")
+# async def get_metrics(request: Request, authorized: bool = Depends(auth_dependency)):
+#     try:
+#         with open("monitor.html", "r") as f:
+#             html_content = f.read()
+#         return HTMLResponse(content=html_content)
+#     except FileNotFoundError as e:
+#         return HTMLResponse(content="<h1>Error: monitor.html no encontrado</h1>")
 
 
 #Api de datos alertas
